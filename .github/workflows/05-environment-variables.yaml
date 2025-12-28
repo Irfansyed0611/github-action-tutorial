@@ -24,3 +24,8 @@ jobs:
 
       - name: Another step (no access to Mood)
         run: echo "Mood is $Mood"        # → This will print nothing!
+  context-variable:
+    runs-on: ubuntu-latest
+    if: ${{ env.DAY_OF_WEEK == 'Tuesday' }}
+    steps:
+      - run: echo "It's Tuesday"
