@@ -1,5 +1,3 @@
-Here’s **Markdown Test File 3** – going even crazier with advanced features that many previewers support (math, Mermaid diagrams, footnotes, callouts, and more emojis)! 🚀
-
 # Markdown Test File 3: The Ultimate Playground 🧪
 
 Let’s push your previewer to the limit!
