@@ -33,5 +33,5 @@ jobs:
   job-3:
     runs-on: ubuntu-latest
     if: ${{ vars.DAY_OF_WEEK == 'Monday'}}
-    step:
+    steps:
       - run: echo "Its Monday"
