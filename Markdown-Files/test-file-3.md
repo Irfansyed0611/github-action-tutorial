@@ -102,5 +102,3 @@ This file has **everything**:
 - Emojis
 
 If your previewer handles most of this, you’ve got a winner! 🏆
-
-Want **Test File 4** with embedded images, HTML tricks, or task lists with due dates? Just say the word! 😄
