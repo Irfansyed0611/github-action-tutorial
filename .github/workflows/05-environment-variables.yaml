@@ -26,6 +26,7 @@ jobs:
         run: echo "Mood is $Mood"        # → This will print nothing!
   context-variable:
     runs-on: ubuntu-latest
-    if: ${{ env.DAY_OF_WEEK == 'Tuesday' }}
     steps:
-      - run: echo "It's Tuesday"
+      - name: Check if Tuesday
+        if: ${{ env.DAY_OF_WEEK == 'Tuesday' }}
+        run: echo "It's Tuesday"
