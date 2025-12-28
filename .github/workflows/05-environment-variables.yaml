@@ -1,0 +1,26 @@
+name: Demo Environment Variables
+
+on: 
+  workflow_dispatch:
+
+env:                                 # ← WORKFLOW level (global)
+  DAY_OF_WEEK: Monday
+  Greeting: Hello
+
+jobs:
+  demo-job:
+    runs-on: ubuntu-latest
+    env:                               # ← JOB level (only this job)
+      First_Name: Irfan
+
+    steps:
+      - name: Say hello (workflow + job vars)
+        run: echo "$Greeting $First_Name, today is $DAY_OF_WEEK!"
+
+      - name: Step with its own variable
+        env:                             # ← STEP level (only this step)
+          Mood: awesome
+        run: echo "I feel $Mood today!"
+
+      - name: Another step (no access to Mood)
+        run: echo "Mood is $Mood"        # → This will print nothing!
