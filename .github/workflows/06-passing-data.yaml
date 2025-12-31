@@ -7,8 +7,8 @@ jobs:
   producer:
     runs-on: ubuntu-latest
 
-    outputs:
-      foo: ${{ steps.generate-foo.outputs.foo }}
+    # outputs:
+    #   foo: ${{ steps.generate-foo.outputs.foo }}
 
     steps:
       - name: Generate and export foo
@@ -33,5 +33,5 @@ jobs:
     steps:
       - name: Inspect values inside consumer (note FOO is unset)
         run: |
-          echo "Value from producer             ${{ steps.generate-foo.output.foo }}"
-          echo "FOO in consumer                 ${FOO:-<UNSET>}"
+          echo "Value from producer         ${{ steps.generate-foo.outputs.foo }}"
+          echo "FOO in consumer             ${FOO:-<UNSET>}"
