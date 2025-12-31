@@ -7,8 +7,8 @@ jobs:
   producer:
     runs-on: ubuntu-latest
 
-    # outputs:
-    #   foo: ${{ steps.generate-foo.outputs.foo }}
+    outputs:
+      foo: ${{ steps.generate-foo.outputs.foo }}
 
     steps:
       - name: Generate and export foo
