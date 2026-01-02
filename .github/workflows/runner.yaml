@@ -1,0 +1,64 @@
+# https://docs.github.com/en/actions/concepts/runners/github-hosted-runners
+# https://namespace.so/docs/solutions/github-actions
+name: Runner types
+"on":
+  workflow_dispatch:
+
+  ######################################
+  #  GITHUB (MICROSOFT) HOSTED RUNNERS
+  ######################################
+
+jobs:
+  github-hosted-ubuntu-vm:
+    name: Ubuntu latest version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show runner info
+        run: |
+          echo "Hello from ${{runner.os }}-${{ runner.arch }}"
+          echo "Runner name (type): ${{ runner.name }}"
+
+
+  github-hosted-windows-vm:
+    name: Ubuntu latest version
+    runs-on: windows-2022
+    steps:
+      - name: Show runner info
+        run: |
+          echo "Hello from ${{runner.os }}-${{ runner.arch }}"
+          echo "Runner name (type): ${{ runner.name }}"
+
+  github-hosted-macos-vm:
+    name: Ubuntu latest version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show runner info
+        run: |
+          echo "Hello from ${{runner.os }}-${{ runner.arch }}"
+          echo "Runner name (type): ${{ runner.name }}"
+
+  alpine-container-on-github-hosted-ubuntu-vm:
+    name: Alpine container on Ubuntu VM
+    runs-on: ubuntu-24.04
+    container:
+      image: alpine:3.20
+    steps:
+      - name: Show runner info
+        run: |
+          echo "Hello from ${{runner.os }}-${{ runner.arch }}"
+          echo "Runner name (type): ${{ runner.name }}"
+          echo "Container image:  $(grep PRETTY_NAME /etc/os-release)"
+
+
+  ######################################
+  #  3RD PARTY HOSTED RUNNERS
+  ######################################
+    
+  namespace-ubuntu-vm:
+    name: Namespace Ubuntu VM
+    runs-on: namespace-profile-default
+    steps:
+      - name: Show runner info
+        run: |
+          echo "Hello from ${{runner.os }}-${{ runner.arch }}"
+          echo "Runner name (type): ${{ runner.name }}"
