@@ -20,7 +20,7 @@ jobs:
 
 
   github-hosted-windows-vm:
-    name: Ubuntu latest version
+    name: Windows 2022 VM
     runs-on: windows-2022
     steps:
       - name: Show runner info
@@ -29,7 +29,7 @@ jobs:
           echo "Runner name (type): ${{ runner.name }}"
 
   github-hosted-macos-vm:
-    name: Ubuntu latest version
+    name: macOS 14 VM
     runs-on: ubuntu-latest
     steps:
       - name: Show runner info
