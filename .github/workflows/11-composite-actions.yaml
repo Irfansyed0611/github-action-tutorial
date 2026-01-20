@@ -8,7 +8,7 @@ jobs:
     name: One usage of the composite action
     steps:
       - uses: actions/checkout@v4
-      - id: composite-action-instance
+      - id: composite-actions-instance
         uses: ./01-authoring-actions/composite-action
         with:
           who-to-greet: "form composite actions in hello-world-1!"
@@ -21,7 +21,7 @@ jobs:
     name: Another usage of the composite action
     steps:
       - uses: actions/checkout@v4
-      - id: composite-action-instance
+      - id: composite-actions-instance
         uses: ./01-authoring-actions/composite-action
         with:
           who-to-greet: "from composite action in hello-world-2"
