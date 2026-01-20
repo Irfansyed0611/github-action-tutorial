@@ -26,6 +26,6 @@ jobs:
         with:
           who-to-greet: "from composite action in hello-world-2"
       - env:
-          RANDOM_NUMBER: ${{ steps.composite-action-instance.outputs.random-number }}
+          RANDOM_NUMBER: ${{ steps.composite-actions-instance.outputs.random-number }}
         run: echo random-number "$RANDOM_NUMBER"
         shell: bash
