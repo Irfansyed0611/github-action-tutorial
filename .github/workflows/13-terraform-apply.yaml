@@ -1,0 +1,138 @@
+# .github/workflows/terraform-apply.yml
+name: Terraform Apply
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform-files/**'
+
+env:
+  TF_WORKING_DIR: terraform-files
+  TF_VERSION: '1.14.3'
+  AWS_REGION: us-east-1
+
+jobs:
+  apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+      id-token: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Find the PR number associated with this merge commit
+      - name: Get PR Number from Merge Commit
+        id: get-pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Get PRs associated with this commit
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha
+            });
+            
+            if (prs.length === 0) {
+              core.setOutput('pr_number', '');
+              core.setOutput('found', 'false');
+              console.log('No PR found for this commit. Will run fresh plan and apply.');
+              return;
+            }
+            
+            // Get the merged PR
+            const mergedPR = prs.find(pr => pr.merged_at !== null) || prs[0];
+            console.log(`Found PR #${mergedPR.number}: ${mergedPR.title}`);
+            
+            core.setOutput('pr_number', mergedPR.number.toString());
+            core.setOutput('found', 'true');
+            core.setOutput('pr_title', mergedPR.title);
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      # === ADD YOUR CLOUD CREDENTIALS HERE ===
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.S3ReadRole }}
+          role-session-name: gh-actions-terraform-plan-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init
+
+      # Download the plan artifact from the PR workflow
+      - name: Download Plan Artifact
+        if: steps.get-pr.outputs.found == 'true'
+        id: download-plan
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: tfplan-pr-${{ steps.get-pr.outputs.pr_number }}
+          path: ${{ env.TF_WORKING_DIR }}
+          workflow: terraform-plan.yml
+          workflow_conclusion: success
+          search_artifacts: true
+          if_no_artifact_found: warn
+        continue-on-error: true
+
+      # Verify the downloaded plan is valid
+      - name: Verify Plan File
+        if: steps.download-plan.outcome == 'success'
+        id: verify-plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          if [ -f "tfplan" ]; then
+            echo "Plan file found"
+            echo "plan_exists=true" >> $GITHUB_OUTPUT
+            terraform show tfplan
+          else
+            echo "Plan file not found in artifact"
+            echo "plan_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Apply using the saved plan (preferred)
+      - name: Terraform Apply (Saved Plan)
+        if: steps.verify-plan.outputs.plan_exists == 'true'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          echo "Applying saved plan from PR #${{ steps.get-pr.outputs.pr_number }}"
+          terraform apply -auto-approve tfplan
+
+      # Fallback: Run fresh plan and apply if no artifact found
+      - name: Terraform Apply (Fresh - Fallback)
+        if: steps.verify-plan.outputs.plan_exists != 'true'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          echo "No saved plan found. Running fresh plan and apply."
+          echo "This can happen if:"
+          echo "  - PR was created before the plan workflow existed"
+          echo "  - Plan artifact expired (>5 days old)"
+          echo "  - Direct push to main without PR"
+          echo ""
+          terraform plan -out=tfplan-fresh
+          terraform apply -auto-approve tfplan-fresh
+
+      - name: Apply Summary
+        if: always()
+        run: |
+          echo "## Apply Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.get-pr.outputs.found }}" == "true" ]; then
+            echo "- **Source PR:** #${{ steps.get-pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **PR Title:** ${{ steps.get-pr.outputs.pr_title }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "- **Plan Type:** ${{ steps.verify-plan.outputs.plan_exists == 'true' && 'Saved Plan' || 'Fresh Plan' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
