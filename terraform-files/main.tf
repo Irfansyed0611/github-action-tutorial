@@ -12,9 +12,6 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "my-bucket" {
-  bucket = "irfan-gh-workflow-bucket-test01"
+  bucket = "irfan-gh-workflow-bucket-test-01"
 }
 
-resource "aws_instance" "this" {
-
-}
