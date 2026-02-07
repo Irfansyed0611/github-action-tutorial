@@ -1,3 +1,6 @@
+Markdown files 1
+
+=======
 Markdown files 2
 
 Here's your **second random Markdown test file**, packed with more fun elements to play with in your previewer!
