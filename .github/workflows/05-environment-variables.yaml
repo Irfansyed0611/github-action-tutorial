@@ -1,0 +1,38 @@
+# https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-variables
+name: Demo Environment Variables
+
+on: 
+  workflow_dispatch:
+
+env:                                 # ← WORKFLOW level (global)
+  DAY_OF_WEEK: Monday
+  Greeting: Hello
+
+jobs:
+  job-1:
+    runs-on: ubuntu-latest
+    env:                               # ← JOB level (only this job)
+      First_Name: Irfan
+
+    steps:
+      - name: Say hello (workflow + job vars)
+        run: echo "$Greeting $First_Name, today is $DAY_OF_WEEK!"
+
+      - name: Step with its own variable
+        env:                             # ← STEP level (only this step)
+          Mood: awesome
+        run: echo "I feel $Mood today!"
+
+      - name: Another step (no access to Mood)
+        run: echo "Mood is $Mood"        # → This will print nothing!
+  job-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if Tuesday
+        if: ${{ env.DAY_OF_WEEK == 'Tuesday' }}
+        run: echo "It's Tuesday"
+  job-3:
+    runs-on: ubuntu-latest
+    if: ${{ vars.DAY_OF_WEEK == 'Monday'}}
+    steps:
+      - run: echo "Its Monday"

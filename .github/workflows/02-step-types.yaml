@@ -21,5 +21,3 @@ jobs:
       - uses: actions/hello-world-javascript-action@081a6d193d1dcb38460df1e6927486d748730f9d
         with:
           who-to-greet: "from an action in the GitHub Action marketplace! 👋"
-
-    

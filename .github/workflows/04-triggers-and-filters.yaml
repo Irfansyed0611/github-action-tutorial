@@ -1,0 +1,26 @@
+# https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
+name: Triggering events
+
+"on":
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - "Markdown-Files/*.md"
+      - "!Python-Files/*.py"
+
+  workflow_dispatch:
+
+jobs:
+  echo-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump full event JSON
+        run: |
+          echo "=== $GITHUB_EVENT_NAME payload ==="
+          cat "$GITHUB_EVENT_PATH"
+    
+
+    

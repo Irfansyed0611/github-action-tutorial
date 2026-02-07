@@ -1,0 +1,22 @@
+# https://docs.github.com/en/actions/concepts/security/openid-connect
+# https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-aws
+name: AWS OIDC Permissions
+
+on:
+  workflow_dispatch:
+    
+jobs:
+  list-buckets:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+
+    steps:
+      - name: "Configure AWS Credentials - Actions for GitHub Actions"
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{vars.S3ReadRole}}
+
+      - name: List S3 Bucket
+        run: aws s3api list-buckets
