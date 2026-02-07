@@ -1,3 +1,5 @@
+Markdown files 2
+
 Here's your **second random Markdown test file**, packed with more fun elements to play with in your previewer!
 
 # Markdown Test File 2: Advanced Edition 🚀
