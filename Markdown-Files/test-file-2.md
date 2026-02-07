@@ -1,3 +1,8 @@
+<<<<<<< Updated upstream
+=======
+Markdown files 1
+
+>>>>>>> Stashed changes
 Here's your **second random Markdown test file**, packed with more fun elements to play with in your previewer!
 
 # Markdown Test File 2: Advanced Edition 🚀
